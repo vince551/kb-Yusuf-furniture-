@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eugo Solutions Network</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+ <div class="card">
+  <h2 style="text-align:center;">Eugo Solutions Network</h2>
+    <div class="tabs">
+      <div class="tab active" onclick="showTab(0)">Buy</div>
+      <div class="tab" onclick="showTab(1)">Reconnect</div>
+      <div class="tab" onclick="showTab(2)">Admin</div>
+    </div>
+
+    <div class="section active">
+    <div class="plan" onclick="selectPlan(this)">1 Hour <span>KES 10</span></div>
+    <div class="plan" onclick="selectPlan(this)">2 Hours <span>KES 14</span></div>
+    <div class="plan active" onclick="selectPlan(this)">7 Hours <span>KES 35</span></div>
+    <div class="plan" onclick="selectPlan(this)">24 Hours <span>KES 50</span></div>
+    <div class="plan" onclick="selectPlan(this)">Weekly <span>KES 230</span></div>
+    <div class="plan" onclick="selectPlan(this)">Monthly <span>KES 750</span></div>
+
+     <input type="tel" id="phone" placeholder="Phone Number: 07........">
+    <button onclick="payNow()">Pay & Connect</button>
+ </div>
+
+      <div class="section">
+   <input id="mpesaCode" placeholder="Enter M-Pesa Code">
+   <button onclick="reconnect()">Reconnect</button>
+ </div>
+
+    <div class="section">
+  <input id="adminUser" placeholder="Admin Username">
+  <input type="password" id="adminPass" placeholder="Password">
+  <button onclick="adminLogin()">Login</button>
+ </div>
+
+  <div class="timer" id="timer"></div>
+  </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
