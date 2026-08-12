@@ -1,47 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eugo Solutions Network</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="VINCE Luxury Living - premium furniture for beautiful spaces.">
+<title>VINCE Luxury Living</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
- <div class="card">
-  <h2 style="text-align:center;">Eugo Solutions Network</h2>
-    <div class="tabs">
-      <div class="tab active" onclick="showTab(0)">Buy</div>
-      <div class="tab" onclick="showTab(1)">Reconnect</div>
-      <div class="tab" onclick="showTab(2)">Admin</div>
-    </div>
-
-    <div class="section active">
-    <div class="plan" onclick="selectPlan(this)">1 Hour <span>KES 10</span></div>
-    <div class="plan" onclick="selectPlan(this)">2 Hours <span>KES 14</span></div>
-    <div class="plan active" onclick="selectPlan(this)">7 Hours <span>KES 35</span></div>
-    <div class="plan" onclick="selectPlan(this)">24 Hours <span>KES 50</span></div>
-    <div class="plan" onclick="selectPlan(this)">Weekly <span>KES 230</span></div>
-    <div class="plan" onclick="selectPlan(this)">Monthly <span>KES 750</span></div>
-
-     <input type="tel" id="phone" placeholder="Phone Number: 07........">
-    <button onclick="payNow()">Pay & Connect</button>
- </div>
-
-      <div class="section">
-   <input id="mpesaCode" placeholder="Enter M-Pesa Code">
-   <button onclick="reconnect()">Reconnect</button>
- </div>
-
-    <div class="section">
-  <input id="adminUser" placeholder="Admin Username">
-  <input type="password" id="adminPass" placeholder="Password">
-  <button onclick="adminLogin()">Login</button>
- </div>
-
-  <div class="timer" id="timer"></div>
-  </div>
-</div>
+<div class="announcement">✦ Free delivery on orders over KSh 20,000 <span>Help & Support &nbsp; | &nbsp; Track Order</span></div>
+<header class="header">
+<a class="logo" href="index.html"><strong>VINCE</strong><small>LUXURY LIVING</small></a>
+<nav><a class="active" href="index.html">Home</a><a href="shop.html">Shop</a><a href="categories.html">Categories</a><a href="room-ideas.html">Room Ideas</a><a href="offers.html">Offers</a><a href="contact.html">Contact</a></nav>
+<div class="actions"><input id="search" placeholder="Search furniture..."><a href="wishlist.html">♡</a><a href="cart.html">🛍 <b id="cartCount">0</b></a></div>
+</header>
+<main>
+<section class="hero"><div class="hero-copy"><p class="eyebrow">CRAFTED FOR BEAUTIFUL LIVING</p><h1>Premium Furniture.<br>Timeless Style.</h1><p>Discover meticulously crafted furniture that blends comfort, elegance and lasting quality.</p><div class="buttons"><a class="btn gold" href="shop.html">Shop Collection →</a><a class="btn outline" href="room-ideas.html">Explore Room Ideas</a></div></div><div class="hero-art"><div class="sofa"><i></i><i></i></div><div class="table"></div><div class="plant"></div><div class="hero-label">VINCE</div></div></section>
+<section class="categories"><a href="shop.html?category=Living Room">Living Room</a><a href="shop.html?category=Bedroom">Bedroom</a><a href="shop.html?category=Dining">Dining Room</a><a href="shop.html?category=Office">Office</a><a href="shop.html?category=Storage">Storage</a><a href="shop.html?category=Outdoor">Outdoor</a><a href="shop.html?category=Decor">Decor</a><a class="offer" href="offers.html">Special Offers</a></section>
+<section class="benefits"><div><b>🚚 Free Delivery</b><span>Orders over KSh 20,000</span></div><div><b>♢ Secure Payments</b><span>100% safe & trusted</span></div><div><b>↻ 30 Days Returns</b><span>Hassle free returns</span></div><div><b>◯ Quality Guarantee</b><span>Built to last</span></div><div><b>♧ 24/7 Support</b><span>We're here to help</span></div></section>
+<section class="section"><div class="section-head"><div><p class="eyebrow">EXPLORE OUR COLLECTION</p><h2>Popular Categories</h2></div><a href="categories.html">View all →</a></div><div class="category-grid"><a class="category-card" href="shop.html?category=Living Room"><div class="art living"></div><h3>Sofas & Couches</h3><p>From KSh 18,999</p></a><a class="category-card" href="shop.html?category=Bedroom"><div class="art bedroom"></div><h3>Beds & Mattresses</h3><p>From KSh 16,500</p></a><a class="category-card" href="shop.html?category=Dining"><div class="art dining"></div><h3>Dining Sets</h3><p>From KSh 24,999</p></a><a class="category-card" href="shop.html?category=Storage"><div class="art storage"></div><h3>Wardrobes & Cabinets</h3><p>From KSh 13,999</p></a><a class="category-card" href="shop.html?category=Office"><div class="art office"></div><h3>Desks & Office Chairs</h3><p>From KSh 12,500</p></a></div></section>
+<section class="section dark"><div class="section-head"><div><p class="eyebrow">CURATED FOR YOU</p><h2>Featured Furniture</h2></div><a href="shop.html">Shop all →</a></div><div id="featured" class="products"></div></section>
+<section class="sale"><div><p class="eyebrow">LIMITED TIME OFFER</p><h2>Exclusive Summer Sale</h2><p>Up to 25% off selected collections.</p><a class="btn gold" href="offers.html">Shop the Sale →</a></div><div class="sale-art"><span>25%</span><small>OFF SELECTED ITEMS</small></div></section>
+</main>
+<footer><div><a class="logo" href="index.html"><strong>VINCE</strong><small>LUXURY LIVING</small></a><p>Furniture designed for beautiful living.</p></div><div><h4>Shop</h4><a href="shop.html">All Furniture</a><a href="categories.html">Categories</a><a href="offers.html">Offers</a></div><div><h4>Help</h4><a href="contact.html">Contact</a><a href="account.html">My Account</a><a href="cart.html">Cart</a></div><div><h4>Newsletter</h4><p>Get new arrivals and offers.</p><input placeholder="Your email"></div></footer>
+<div class="copyright">© 2026 VINCE Luxury Living. All rights reserved.</div>
 <script src="script.js"></script>
-</body>
-</html>
+</body></html>
