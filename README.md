@@ -1,39 +1,20 @@
-<div align="center">
+# VINCE Luxury Living
 
-# ⚡ UJO
-### **Vince's Experimental Project Lab**
+A responsive luxury furniture storefront replacing the original UJO website.
 
-![Status](https://img.shields.io/badge/STATUS-EXPERIMENTAL-00FF88?style=for-the-badge)
-![Owner](https://img.shields.io/badge/BUILDER-VINCE-111111?style=for-the-badge)
+## Current stack
+- HTML5
+- CSS3
+- Vanilla JavaScript
+- LocalStorage cart foundation
 
-**A lightweight project workspace for experimentation, prototyping and learning.**
+## Planned backend
+- Firebase Firestore for product/order data
+- Firebase Storage for furniture images
+- Firebase Authentication for customer accounts
+- Gemini AI for furniture recommendations, natural-language search and an AI shopping assistant
 
-</div>
+The AI will use trusted product data from Firestore; the AI model itself is not used as the database.
 
----
-
-## ✦ Purpose
-
-This repository is part of Vince's development workspace and can evolve as ideas move from prototypes into usable products.
-
-## 🧪 Working Principles
-
-- Prototype quickly
-- Keep experiments understandable
-- Document useful discoveries
-- Turn successful experiments into maintainable projects
-
-## 🚀 Clone
-
-```bash
-git clone https://github.com/vince551/ujo.git
-cd ujo
-```
-
-## 👨‍💻 Builder
-
-**Vince Odhiambo** — web developer and technology learner.
-
----
-
-<p align="center"><sub>Prototype → learn → refine → ship.</sub></p>
+## Project
+The homepage is `index.html`. The site is designed mobile-first and can be continued from SPCK on Android.
