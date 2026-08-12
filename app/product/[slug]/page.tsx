@@ -1,18 +1,17 @@
-'use client';
-import Link from 'next/link';
-import { ArrowLeft, Heart, ShoppingBag } from 'lucide-react';
-import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import ProductClient from './product-client';
 
 const products:any={
- 'luna-boucle-sofa':{name:'Luna Bouclé Sofa',price:'KSh 89,900',category:'Living',image:'../../15d900d80767c34c4396197a2a935293.jpg',copy:'A softly sculpted sofa designed to make the everyday feel special.',details:'Bouclé upholstery · solid timber frame · deep lounge seat'},
- 'atelier-dining-collection':{name:'Atelier Dining Collection',price:'KSh 119,000',category:'Dining',image:'../../2c050b2da01e5ff74969aada972360db.jpg',copy:'A generous dining setting for long lunches, late conversations and everything between.',details:'Natural wood · hand-finished surface · six-seat configuration'},
- 'noir-bedroom-suite':{name:'Noir Bedroom Suite',price:'KSh 148,500',category:'Bedroom',image:'../../6def6def9e3064a1e6c7e1513df7ddb9.jpg',copy:'A calm, tactile bedroom collection with a quietly dramatic silhouette.',details:'Textured upholstery · oak accents · coordinated bedside pieces'}
+  'luna-boucle-sofa':{name:'Luna Bouclé Sofa',price:'KSh 89,900',category:'Living',image:'../../15d900d80767c34c4396197a2a935293.jpg',copy:'A softly sculpted sofa designed to make the everyday feel special.',details:'Bouclé upholstery · solid timber frame · deep lounge seat'},
+  'atelier-dining-collection':{name:'Atelier Dining Collection',price:'KSh 119,000',category:'Dining',image:'../../2c050b2da01e5ff74969aada972360db.jpg',copy:'A generous dining setting for long lunches, late conversations and everything between.',details:'Natural wood · hand-finished surface · six-seat configuration'},
+  'noir-bedroom-suite':{name:'Noir Bedroom Suite',price:'KSh 148,500',category:'Bedroom',image:'../../6def6def9e3064a1e6c7e1513df7ddb9.jpg',copy:'A calm, tactile bedroom collection with a quietly dramatic silhouette.',details:'Textured upholstery · oak accents · coordinated bedside pieces'}
 };
 
-// Required by Next.js when this route is statically exported for GitHub Pages.
 export function generateStaticParams(){
   return Object.keys(products).map(slug=>({slug}));
 }
 
-export default function Product(){const {slug}=useParams();const p=products[String(slug)]||products['luna-boucle-sofa'];const [added,setAdded]=useState(false);function add(){localStorage.setItem('tovi_cart_count',String(Number(localStorage.getItem('tovi_cart_count')||0)+1));setAdded(true)}return <main className="site-shell min-h-screen"><header className="site-header"><Link href="/" className="brand"><span>VINCE</span><small>Maison · Product</small></Link><div className="header-actions"><Link href="/shop" className="bag-link">Collection</Link><Link href="/wishlist" className="icon-button"><Heart size={17}/></Link><Link href="/cart" className="icon-button"><ShoppingBag size={17}/></Link></div></header><section style={{display:'grid',gridTemplateColumns:'1.2fr .8fr',minHeight:'calc(100vh - 70px)'}}><div style={{minHeight:600,background:'var(--surface-2)'}}><img src={p.image} alt={p.name} style={{width:'100%',height:'100%',objectFit:'cover'}}/></div><div style={{padding:'clamp(40px,7vw,100px)',display:'flex',flexDirection:'column',justifyContent:'center'}}><Link href="/shop" className="gold-link" style={{marginTop:0}}><ArrowLeft size={14}/> Back to collection</Link><p className="eyebrow" style={{marginTop:55}}>{p.category}</p><h1 className="display" style={{fontSize:'clamp(3.5rem,6vw,6.5rem)',lineHeight:.88,margin:'14px 0'}}>{p.name}</h1><p style={{color:'var(--gold)',fontSize:18}}>{p.price}</p><p style={{color:'var(--muted)',lineHeight:1.9,maxWidth:520}}>{p.copy}</p><div style={{borderTop:'1px solid var(--line)',borderBottom:'1px solid var(--line)',padding:'20px 0',margin:'30px 0',fontSize:11,color:'var(--muted)'}}>{p.details}</div><button className="btn-gold" onClick={add} style={{border:0,cursor:'pointer'}}>{added?'Added to bag ✓':'Add to bag'} <ShoppingBag size={14}/></button>{added&&<Link href="/cart" className="gold-link">View shopping bag →</Link>}</div></section></main>}
+export default async function Product({params}:{params:Promise<{slug:string}>}){
+  const {slug}=await params;
+  const product=products[slug]||products['luna-boucle-sofa'];
+  return <ProductClient p={product}/>;
+}
