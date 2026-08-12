@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, Search, ShoppingBag, Sparkles, Truck, ShieldCheck, Heart } from 'lucide-react';
 import ThemeToggle from './components/theme-toggle';
 import ScrollProgress from './components/scroll-progress';
+import PremiumPolish from './components/premium-polish';
 
 const base='/tovi';
 const images={
@@ -30,6 +31,7 @@ const inspiration=[
 
 export default function Home(){return <main className="site-shell min-h-screen overflow-hidden">
 <ScrollProgress/>
+<PremiumPolish/>
 <div className="marquee"><span>VINCE MAISON · NAIROBI · PRIVATE INTERIOR CONSULTATIONS · COMPLIMENTARY DELIVERY OVER KSh 20,000 · VINCE MAISON · NAIROBI · PRIVATE INTERIOR CONSULTATIONS · COMPLIMENTARY DELIVERY OVER KSh 20,000 · </span></div>
 <header className="site-header">
   <Link href="/" className="brand"><span>VINCE</span><small>Maison · Furniture & Interiors</small></Link>
