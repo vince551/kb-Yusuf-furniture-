@@ -4,7 +4,8 @@ import ThemeToggle from './components/theme-toggle';
 import ScrollProgress from './components/scroll-progress';
 import PremiumPolish from './components/premium-polish';
 
-const base='/tovi';
+// GitHub Pages is served from /tovi; Vercel serves this app from the domain root.
+const base = process.env.VERCEL === '1' ? '' : '/tovi';
 const images={
   hero:'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2200&q=90',
   living:`${base}/15d900d80767c34c4396197a2a935293.jpg`,
