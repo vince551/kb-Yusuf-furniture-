@@ -1,0 +1,5 @@
+import { NextResponse } from 'next/server';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import { z } from 'zod';
+const Body=z.object({message:z.string().min(2).max(1000)});
+export async function POST(req:Request){try{const body=Body.parse(await req.json());if(!process.env.GEMINI_API_KEY)return NextResponse.json({reply:'The VINCE AI concierge is being prepared. Please connect GEMINI_API_KEY to activate it.'},{status:200});const ai=new GoogleGenerativeAI(process.env.GEMINI_API_KEY);const model=ai.getGenerativeModel({model:'gemini-2.5-flash'});const prompt=`You are VINCE Maison's luxury furniture concierge in Kenya. Be concise, tasteful and helpful. Recommend furniture by room, style and budget. Never invent stock or prices; when product data is unavailable, say so. Currency is KSh. Customer request: ${body.message}`;const result=await model.generateContent(prompt);return NextResponse.json({reply:result.response.text()})}catch{return NextResponse.json({reply:'Please try again.'},{status:400})}}
