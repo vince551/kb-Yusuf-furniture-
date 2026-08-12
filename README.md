@@ -1,20 +1,30 @@
-# VINCE Luxury Living
+# VINCE Maison
 
-A responsive luxury furniture storefront replacing the original UJO website.
+Premium furniture commerce platform rebuilt with a modern full-stack architecture.
 
-## Current stack
-- HTML5
-- CSS3
-- Vanilla JavaScript
-- LocalStorage cart foundation
+## Stack
+- Next.js App Router + React 19
+- TypeScript
+- Tailwind CSS
+- Supabase: Postgres database, Auth and Storage
+- Gemini API: AI furniture concierge
+- Next.js Route Handlers for backend APIs
+- Vercel-ready deployment
 
-## Planned backend
-- Firebase Firestore for product/order data
-- Firebase Storage for furniture images
-- Firebase Authentication for customer accounts
-- Gemini AI for furniture recommendations, natural-language search and an AI shopping assistant
+## Architecture
+The frontend is no longer limited to static HTML/CSS/JS. Next.js handles the application, server-rendered pages and backend route handlers. Supabase is the persistent source of truth for products, inventory, customers, orders and reviews. Gemini is an intelligence layer, not the database.
 
-The AI will use trusted product data from Firestore; the AI model itself is not used as the database.
+## Supabase tables to create
+`products`, `categories`, `profiles`, `orders`, `order_items`, `wishlists`, `reviews`, `room_ideas`.
 
-## Project
-The homepage is `index.html`. The site is designed mobile-first and can be continued from SPCK on Android.
+Recommended `products` fields: `id`, `name`, `slug`, `description`, `price`, `category_id`, `images`, `stock`, `featured`, `created_at`.
+
+## Environment
+Copy `.env.example` to `.env.local` and add Supabase credentials plus `GEMINI_API_KEY`. Never commit real secrets.
+
+## Run locally
+`npm install`
+`npm run dev`
+
+## Deployment
+Import the repository into Vercel, add the environment variables, and deploy. The current static HTML files can remain during migration, but the Next.js `app/` tree is the new application entry point.
