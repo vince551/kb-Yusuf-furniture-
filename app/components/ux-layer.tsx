@@ -26,10 +26,10 @@ export default function UXLayer(){
   return <>
     <div className="floating-contacts" aria-label="Contact KB Yusuf Furniture International Limited">
       <a className="floating-contact whatsapp" href="https://wa.me/2348109730941" target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp" title="WhatsApp">
-        <MessageCircle size={21}/><span>WhatsApp</span>
+        <MessageCircle size={20}/><span>WhatsApp</span>
       </a>
       <a className="floating-contact email" href="mailto:kbyusufurniture@gmail.com" aria-label="Email us" title="Email">
-        <Mail size={20}/><span>Email</span>
+        <Mail size={19}/><span>Email</span>
       </a>
     </div>
 
