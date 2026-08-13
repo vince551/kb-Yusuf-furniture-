@@ -3,6 +3,6 @@ import './globals.css';
 import './ux.css';
 import UXLayer from './components/ux-layer';
 
-export const metadata: Metadata={title:'VINCE Maison | Furniture & Interiors',description:'Refined furniture, interiors and intelligent styling for modern living.',viewport:'width=device-width, initial-scale=1, viewport-fit=cover'};
+export const metadata: Metadata={title:'KB Yusuf Furniture International Limited | Furniture & Interior Decorations',description:'Furniture and interior decoration services in Abuja, Nigeria.',viewport:'width=device-width, initial-scale=1, viewport-fit=cover'};
 
 export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en"><body>{children}<UXLayer/></body></html>}
