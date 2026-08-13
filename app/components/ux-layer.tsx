@@ -24,11 +24,11 @@ export default function UXLayer(){
   const destination=query.trim()?`/shop?search=${encodeURIComponent(query.trim())}`:'/shop';
 
   return <>
-    <div className="contact-float" aria-label="Contact KB Yusuf Furniture International Limited">
-      <a className="contact-float-btn whatsapp" href="https://wa.me/2348109730941" target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp" title="WhatsApp">
+    <div className="floating-contacts" aria-label="Contact KB Yusuf Furniture International Limited">
+      <a className="floating-contact whatsapp" href="https://wa.me/2348109730941" target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp" title="WhatsApp">
         <MessageCircle size={21}/><span>WhatsApp</span>
       </a>
-      <a className="contact-float-btn email" href="mailto:kbyusufurniture@gmail.com" aria-label="Email us" title="Email">
+      <a className="floating-contact email" href="mailto:kbyusufurniture@gmail.com" aria-label="Email us" title="Email">
         <Mail size={20}/><span>Email</span>
       </a>
     </div>
