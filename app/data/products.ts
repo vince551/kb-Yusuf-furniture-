@@ -8,7 +8,7 @@ export type Product = {
   desc: string;
 };
 
-const img = (n:number) => `/tovi/IMG-20260813-WA${String(n).padStart(4,'0')}.jpg`;
+const img = (n:number) => `https://raw.githubusercontent.com/vince551/tovi/main/IMG-20260813-WA${String(n).padStart(4,'0')}.jpg`;
 
 export const products: Product[] = [
   { slug:'luna-boucle-sofa', name:'Luna Bouclé Sofa', price:89900, category:'Living', image:img(62), tag:'Bestseller', desc:'A generous, softly sculpted sofa designed for slow afternoons and long evenings.' },
