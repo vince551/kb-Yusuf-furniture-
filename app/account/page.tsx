@@ -3,16 +3,15 @@
 import { FormEvent, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight, LogIn, LogOut, Mail, ShieldCheck, UserPlus, FileText } from 'lucide-react'
-import { ID } from 'appwrite'
-import { account } from '@/lib/appwrite/client'
 
 type Customer = { $id: string; email: string; name: string }
+
 type Quote = { id: string; createdAt: string; items: Array<{ name: string; category: string; quantity: number }>; location?: string; notes?: string; status: string }
 
 export default function Account() {
   const [mode, setMode] = useState<'login' | 'signup'>('login')
   const [user, setUser] = useState<Customer | null>(null)
-  const [quotes, setQuotes] = useState<Quote[]>([])
+  const [quotes] = useState<Quote[]>([])
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -22,29 +21,49 @@ export default function Account() {
 
   async function loadUser() {
     try {
-      const current = await account.get() as Customer
-      setUser(current)
-      const prefs = await account.getPrefs() as { quotations?: Quote[] }
-      setQuotes(Array.isArray(prefs.quotations) ? prefs.quotations : [])
-    } catch { setUser(null); setQuotes([]) }
+      const response = await fetch('/api/auth/me', { cache: 'no-store' })
+      const data = await response.json()
+      setUser(data.user || null)
+    } catch {
+      setUser(null)
+    }
   }
 
   useEffect(() => { loadUser() }, [])
 
   async function submit(e: FormEvent) {
-    e.preventDefault(); setLoading(true); setError(''); setMessage('')
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+    setMessage('')
+
     try {
-      if (mode === 'signup') await account.create(ID.unique(), email.trim(), password, fullName.trim())
-      await account.createEmailPasswordSession(email.trim(), password)
-      await loadUser()
+      const endpoint = mode === 'signup' ? '/api/auth/signup' : '/api/auth/login'
+      const body = mode === 'signup' ? { name: fullName, email, password } : { email, password }
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+      const data = await response.json()
+
+      if (!response.ok) throw new Error(data?.error || 'Unable to complete the request.')
+
+      setUser(data.user)
+      setPassword('')
       setMessage(mode === 'signup' ? 'Your account is ready. Welcome to KB Yusuf Furniture.' : 'Welcome back.')
     } catch (err: any) {
       setError(err?.message || 'Unable to complete the request. Please try again.')
-    } finally { setLoading(false) }
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function signOut() {
-    try { await account.deleteSession('current') } finally { setUser(null); setQuotes([]); setMessage('You have been signed out.') }
+    try { await fetch('/api/auth/me', { method: 'DELETE' }) } finally {
+      setUser(null)
+      setMessage('You have been signed out.')
+    }
   }
 
   return (
@@ -60,7 +79,7 @@ export default function Account() {
           {user ? (
             <div className="mt-5">
               <h1 className="display text-5xl leading-[.9] md:text-7xl">Welcome,<br/><i className="text-[var(--gold)]">{user.name || user.email.split('@')[0]}.</i></h1>
-              <p className="mt-6 text-sm leading-7 text-[var(--muted)]">Your customer account is active. Your quotation requests are saved to your Appwrite account.</p>
+              <p className="mt-6 text-sm leading-7 text-[var(--muted)]">Your customer account is active. Your future quotation requests can be linked to this secure Appwrite session.</p>
               <div className="mt-7 space-y-3 border-y border-[var(--line)] py-6 text-sm">
                 <div className="flex items-center gap-3"><Mail size={17} className="text-[var(--gold)]"/><span>{user.email}</span></div>
                 <div className="flex items-center gap-3"><ShieldCheck size={17} className="text-[var(--gold)]"/><span>Secure Appwrite customer session</span></div>
@@ -68,7 +87,7 @@ export default function Account() {
 
               <div className="mt-8">
                 <div className="flex items-center gap-2"><FileText size={16} className="text-[var(--gold)]"/><p className="eyebrow">MY QUOTATION REQUESTS</p></div>
-                {quotes.length === 0 ? <p className="mt-4 text-sm leading-6 text-[var(--muted)]">No quotation requests have been saved yet.</p> : <div className="mt-4 space-y-3">{quotes.map(q => <article key={q.id} className="border border-[var(--line)] p-4"><div className="flex justify-between gap-4 text-[9px] uppercase tracking-[.14em] text-[var(--muted)]"><span>{new Date(q.createdAt).toLocaleDateString()}</span><span className="text-[var(--gold)]">{q.status}</span></div><p className="mt-3 text-sm">{q.items.map(i => `${i.name} × ${i.quantity}`).join(' · ')}</p>{q.location && <p className="mt-2 text-xs text-[var(--muted)]">Delivery: {q.location}</p>}</article>)}</div>}
+                {quotes.length === 0 ? <p className="mt-4 text-sm leading-6 text-[var(--muted)]">No quotation requests have been saved yet. Add furniture to your request bag when you're ready.</p> : <div className="mt-4 space-y-3">{quotes.map(q => <article key={q.id} className="border border-[var(--line)] p-4"><div className="flex justify-between gap-4 text-[9px] uppercase tracking-[.14em] text-[var(--muted)]"><span>{new Date(q.createdAt).toLocaleDateString()}</span><span className="text-[var(--gold)]">{q.status}</span></div><p className="mt-3 text-sm">{q.items.map(i => `${i.name} × ${i.quantity}`).join(' · ')}</p>{q.location && <p className="mt-2 text-xs text-[var(--muted)]">Delivery: {q.location}</p>}</article>)}</div>}
               </div>
 
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
@@ -92,7 +111,7 @@ export default function Account() {
               </form>
               {error && <p className="mt-5 border border-red-500/30 bg-red-500/10 p-4 text-xs leading-5 text-red-300">{error}</p>}
               {message && <p className="mt-5 border border-[var(--gold)]/30 bg-[var(--gold)]/10 p-4 text-xs leading-5 text-[var(--gold)]">{message}</p>}
-              <p className="mt-6 text-[9px] leading-5 text-[var(--muted)]">Authentication is handled by Appwrite. Passwords are never stored in this website's source code.</p>
+              <p className="mt-6 text-[9px] leading-5 text-[var(--muted)]">Your password is sent directly to Appwrite over HTTPS and is never stored in this website's source code.</p>
             </>
           )}
         </div>
