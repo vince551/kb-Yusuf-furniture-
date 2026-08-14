@@ -2,15 +2,17 @@
 
 import { FormEvent, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { ArrowRight, LogIn, LogOut, Mail, ShieldCheck, UserPlus } from 'lucide-react'
+import { ArrowRight, LogIn, LogOut, Mail, ShieldCheck, UserPlus, FileText } from 'lucide-react'
 import { ID } from 'appwrite'
 import { account } from '@/lib/appwrite/client'
 
 type Customer = { $id: string; email: string; name: string }
+type Quote = { id: string; createdAt: string; items: Array<{ name: string; category: string; quantity: number }>; location?: string; notes?: string; status: string }
 
 export default function Account() {
   const [mode, setMode] = useState<'login' | 'signup'>('login')
   const [user, setUser] = useState<Customer | null>(null)
+  const [quotes, setQuotes] = useState<Quote[]>([])
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -19,7 +21,12 @@ export default function Account() {
   const [error, setError] = useState('')
 
   async function loadUser() {
-    try { setUser(await account.get() as Customer) } catch { setUser(null) }
+    try {
+      const current = await account.get() as Customer
+      setUser(current)
+      const prefs = await account.getPrefs() as { quotations?: Quote[] }
+      setQuotes(Array.isArray(prefs.quotations) ? prefs.quotations : [])
+    } catch { setUser(null); setQuotes([]) }
   }
 
   useEffect(() => { loadUser() }, [])
@@ -27,9 +34,7 @@ export default function Account() {
   async function submit(e: FormEvent) {
     e.preventDefault(); setLoading(true); setError(''); setMessage('')
     try {
-      if (mode === 'signup') {
-        await account.create(ID.unique(), email.trim(), password, fullName.trim())
-      }
+      if (mode === 'signup') await account.create(ID.unique(), email.trim(), password, fullName.trim())
       await account.createEmailPasswordSession(email.trim(), password)
       await loadUser()
       setMessage(mode === 'signup' ? 'Your account is ready. Welcome to KB Yusuf Furniture.' : 'Welcome back.')
@@ -39,7 +44,7 @@ export default function Account() {
   }
 
   async function signOut() {
-    try { await account.deleteSession('current') } finally { setUser(null); setMessage('You have been signed out.') }
+    try { await account.deleteSession('current') } finally { setUser(null); setQuotes([]); setMessage('You have been signed out.') }
   }
 
   return (
@@ -55,13 +60,19 @@ export default function Account() {
           {user ? (
             <div className="mt-5">
               <h1 className="display text-5xl leading-[.9] md:text-7xl">Welcome,<br/><i className="text-[var(--gold)]">{user.name || user.email.split('@')[0]}.</i></h1>
-              <p className="mt-6 text-sm leading-7 text-[var(--muted)]">Your customer account is active. Your quotation requests can be managed from this account.</p>
+              <p className="mt-6 text-sm leading-7 text-[var(--muted)]">Your customer account is active. Your quotation requests are saved to your Appwrite account.</p>
               <div className="mt-7 space-y-3 border-y border-[var(--line)] py-6 text-sm">
                 <div className="flex items-center gap-3"><Mail size={17} className="text-[var(--gold)]"/><span>{user.email}</span></div>
-                <div className="flex items-center gap-3"><ShieldCheck size={17} className="text-[var(--gold)]"/><span>Authenticated Appwrite customer session</span></div>
+                <div className="flex items-center gap-3"><ShieldCheck size={17} className="text-[var(--gold)]"/><span>Secure Appwrite customer session</span></div>
               </div>
+
+              <div className="mt-8">
+                <div className="flex items-center gap-2"><FileText size={16} className="text-[var(--gold)]"/><p className="eyebrow">MY QUOTATION REQUESTS</p></div>
+                {quotes.length === 0 ? <p className="mt-4 text-sm leading-6 text-[var(--muted)]">No quotation requests have been saved yet.</p> : <div className="mt-4 space-y-3">{quotes.map(q => <article key={q.id} className="border border-[var(--line)] p-4"><div className="flex justify-between gap-4 text-[9px] uppercase tracking-[.14em] text-[var(--muted)]"><span>{new Date(q.createdAt).toLocaleDateString()}</span><span className="text-[var(--gold)]">{q.status}</span></div><p className="mt-3 text-sm">{q.items.map(i => `${i.name} × ${i.quantity}`).join(' · ')}</p>{q.location && <p className="mt-2 text-xs text-[var(--muted)]">Delivery: {q.location}</p>}</article>)}</div>}
+              </div>
+
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                <Link href="/bag" className="btn-gold">View quotation bag <ArrowRight size={15}/></Link>
+                <Link href="/cart" className="btn-gold">View quotation bag <ArrowRight size={15}/></Link>
                 <button onClick={signOut} className="btn-ghost border-[var(--line)] text-[var(--text)]"><LogOut size={15}/> Sign out</button>
               </div>
             </div>
