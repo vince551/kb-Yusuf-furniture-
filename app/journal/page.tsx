@@ -1,19 +1,17 @@
 import Link from 'next/link';
-
-const asset = (filename: string) =>
-  process.env.VERCEL === '1' ? `/${filename}` : `/tovi/${filename}`;
+import { furnitureImage } from '../data/images';
 
 const stories = [
-  ['The art of the soft room', 'How pastel tones, tactile textiles and curved forms make a space feel instantly more inviting.', asset('0865349b2c2c7fc9275ff3ec59bad7db.jpg')],
-  ['Small room, big personality', 'A practical guide to making compact spaces feel layered, warm and intentional.', asset('14128ff6ee4ec64f94d59a78594766fc.jpg')],
-  ['Designing for real life', 'Why the best furniture is beautiful enough to admire and comfortable enough to live with.', asset('15d900d80767c34c4396197a2a935293.jpg')],
+  ['The art of the soft room', 'How pastel tones, tactile textiles and curved forms make a space feel instantly more inviting.', furnitureImage(28)],
+  ['Small room, big personality', 'A practical guide to making compact spaces feel layered, warm and intentional.', furnitureImage(29)],
+  ['Designing for real life', 'Why the best furniture is beautiful enough to admire and comfortable enough to live with.', furnitureImage(30)],
 ];
 
 export default function Journal() {
   return (
     <main className="site-shell min-h-screen">
       <header className="site-header">
-        <Link href="/" className="brand"><span>VINCE</span><small>Maison · Journal</small></Link>
+        <Link href="/" className="brand"><span>KB YUSUF FURNITURE</span><small>Interior Decorations · Journal</small></Link>
         <nav className="main-nav">
           <Link href="/shop" className="nav-link">Collection</Link>
           <Link href="/spaces" className="nav-link">Spaces</Link>
@@ -24,7 +22,7 @@ export default function Journal() {
       </header>
 
       <section className="editorial-intro">
-        <div><p className="eyebrow">VINCE / JOURNAL</p></div>
+        <div><p className="eyebrow">KB YUSUF / JOURNAL</p></div>
         <div>
           <h1 className="display" style={{ fontSize: 'clamp(4rem,9vw,9rem)', lineHeight: .85, margin: 0 }}>Ideas for<br /><i>beautiful living.</i></h1>
           <p>Notes on furniture, interiors, materials and the small choices that make a room feel like yours.</p>
