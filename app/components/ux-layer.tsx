@@ -20,7 +20,7 @@ export default function UXLayer(){
     return()=>{window.removeEventListener('scroll',onScroll);window.removeEventListener('keydown',onKey)};
   },[]);
 
-  const suggestions=['Sofas','Dining tables','Bedroom','Lighting','Under KSh 100,000'];
+  const suggestions=['Sofas','Dining tables','Bedroom','Lighting','Interior decoration'];
   const destination=query.trim()?`/shop?search=${encodeURIComponent(query.trim())}`:'/shop';
 
   return <>
