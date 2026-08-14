@@ -1,10 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, Minus, Plus, ShoppingBag, Trash2, MessageCircle, Mail, Send } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Minus, Plus, ShoppingBag, Trash2, MessageCircle, Mail, Send, UserCheck } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { ID } from 'appwrite';
+import { account } from '@/lib/appwrite/client';
 
 type BagItem={slug:string;name:string;category:string;image:string;quantity:number};
+type Quote={id:string;createdAt:string;items:Array<{name:string;category:string;quantity:number}>;location:string;notes:string;status:string};
 const BAG_KEY='kbyusuf_quote_bag';
 const WHATSAPP='2348109730941';
 const EMAIL='kbyusufurniture@gmail.com';
@@ -13,24 +16,34 @@ export default function Cart(){
   const [items,setItems]=useState<BagItem[]>([]);
   const [customer,setCustomer]=useState({name:'',phone:'',email:'',location:'',notes:''});
   const [sent,setSent]=useState(false);
+  const [saving,setSaving]=useState(false);
+  const [signedIn,setSignedIn]=useState(false);
 
-  function load(){
-    try{setItems(JSON.parse(localStorage.getItem(BAG_KEY)||'[]'));}catch{setItems([])}
-  }
-  useEffect(()=>{load(); const handler=()=>load(); window.addEventListener('kbyusuf-bag-updated',handler); return()=>window.removeEventListener('kbyusuf-bag-updated',handler)},[]);
+  function load(){try{setItems(JSON.parse(localStorage.getItem(BAG_KEY)||'[]'));}catch{setItems([])}}
+  useEffect(()=>{load(); const handler=()=>load(); window.addEventListener('kbyusuf-bag-updated',handler); account.get().then(()=>setSignedIn(true)).catch(()=>setSignedIn(false)); return()=>window.removeEventListener('kbyusuf-bag-updated',handler)},[]);
 
   const totalPieces=useMemo(()=>items.reduce((sum,i)=>sum+i.quantity,0),[items]);
   function save(next:BagItem[]){setItems(next);localStorage.setItem(BAG_KEY,JSON.stringify(next));localStorage.setItem('kbyusuf_cart_count',String(next.reduce((sum,i)=>sum+i.quantity,0)));window.dispatchEvent(new Event('kbyusuf-bag-updated'))}
-  function change(slug:number|string,delta:number){save(items.map(i=>i.slug===slug?{...i,quantity:Math.max(1,i.quantity+delta)}:i))}
+  function change(slug:string,delta:number){save(items.map(i=>i.slug===slug?{...i,quantity:Math.max(1,i.quantity+delta)}:i))}
   function remove(slug:string){save(items.filter(i=>i.slug!==slug))}
   function clear(){save([]);setSent(false)}
 
-  function buildMessage(){
-    const list=items.map(i=>`• ${i.name} (${i.category}) × ${i.quantity}`).join('\n');
-    return `Hello KB Yusuf Furniture International Limited, I would like to request a quotation for the following furniture:\n\n${list}\n\nCustomer name: ${customer.name}\nPhone: ${customer.phone}\nEmail: ${customer.email||'Not provided'}\nLocation: ${customer.location||'Not provided'}\nAdditional requirements: ${customer.notes||'None'}\n\nPlease send me the available options, pricing and delivery details.`;
+  function buildMessage(){const list=items.map(i=>`• ${i.name} (${i.category}) × ${i.quantity}`).join('\n');return `Hello KB Yusuf Furniture International Limited, I would like to request a quotation for the following furniture:\n\n${list}\n\nCustomer name: ${customer.name}\nPhone: ${customer.phone}\nEmail: ${customer.email||'Not provided'}\nLocation: ${customer.location||'Not provided'}\nAdditional requirements: ${customer.notes||'None'}\n\nPlease send me the available options, pricing and delivery details.`}
+
+  async function saveQuotation(){
+    if(!signedIn) return
+    setSaving(true)
+    try{
+      const prefs=await account.getPrefs() as {quotations?:Quote[]}
+      const existing=Array.isArray(prefs.quotations)?prefs.quotations:[]
+      const quote:Quote={id:ID.unique(),createdAt:new Date().toISOString(),items:items.map(i=>({name:i.name,category:i.category,quantity:i.quantity})),location:customer.location,notes:customer.notes,status:'Submitted'}
+      await account.updatePrefs({quotations:[quote,...existing].slice(0,25)})
+      setSent(true)
+    }catch{setSent(false)}finally{setSaving(false)}
   }
-  function requestWhatsApp(){if(!customer.name||!customer.phone){alert('Please enter your name and phone number first.');return}window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(buildMessage())}`,'_blank','noopener,noreferrer');setSent(true)}
-  function requestEmail(){if(!customer.name||!customer.phone){alert('Please enter your name and phone number first.');return}window.location.href=`mailto:${EMAIL}?subject=${encodeURIComponent('Furniture quotation request')}&body=${encodeURIComponent(buildMessage())}`;setSent(true)}
+
+  async function requestWhatsApp(){if(!customer.name||!customer.phone){alert('Please enter your name and phone number first.');return}await saveQuotation();window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(buildMessage())}`,'_blank','noopener,noreferrer');setSent(true)}
+  async function requestEmail(){if(!customer.name||!customer.phone){alert('Please enter your name and phone number first.');return}await saveQuotation();window.location.href=`mailto:${EMAIL}?subject=${encodeURIComponent('Furniture quotation request')}&body=${encodeURIComponent(buildMessage())}`;setSent(true)}
 
   return <main className="site-shell min-h-screen">
     <header className="site-header"><Link href="/" className="brand"><span>KB YUSUF FURNITURE</span><small>Interior Decorations · Request Bag</small></Link><Link href="/shop" className="bag-link">Continue shopping →</Link></header>
@@ -45,9 +58,11 @@ export default function Cart(){
         <form onSubmit={e=>{e.preventDefault();requestWhatsApp()}} style={{background:'var(--surface)',border:'1px solid var(--line)',padding:'28px',alignSelf:'start'}}>
           <p className="eyebrow">CLIENT DETAILS</p><h2 className="display" style={{fontSize:'2.6rem',margin:'10px 0 22px'}}>Tell us about<br/><i>your project.</i></h2>
           <div style={{display:'grid',gap:12}}>{[['name','Full name *'],['phone','Phone / WhatsApp *'],['email','Email address'],['location','City / delivery location'],['notes','Notes, measurements or special requirements']].map(([key,label])=><label key={key} style={{display:'grid',gap:6,fontSize:8,textTransform:'uppercase',letterSpacing:'.14em',color:'var(--muted)'}}>{label}{key==='notes'?<textarea value={customer[key as keyof typeof customer]} onChange={e=>setCustomer({...customer,[key]:e.target.value})} rows={4} placeholder="Tell us anything that will help us prepare your quotation." style={fieldStyle}/>:<input value={customer[key as keyof typeof customer]} onChange={e=>setCustomer({...customer,[key]:e.target.value})} placeholder={label.replace(' *','')} style={fieldStyle}/>}</label>)}</div>
+          {signedIn&&<p style={{display:'flex',alignItems:'center',gap:7,fontSize:10,color:'var(--gold)',lineHeight:1.7,margin:'18px 0 0'}}><UserCheck size={13}/> This request will also be saved to your customer account.</p>}
+          {!signedIn&&<p style={{fontSize:10,color:'var(--muted)',lineHeight:1.7,margin:'18px 0'}}>No account is required to request a quotation. Sign in from Client Care if you want your requests saved to your account.</p>}
           <p style={{fontSize:10,color:'var(--muted)',lineHeight:1.7,margin:'18px 0'}}>No online payment is required. We will confirm availability, pricing, customisation and delivery with you.</p>
-          <div style={{display:'grid',gap:9}}><button type="submit" className="btn-gold" style={{border:0,cursor:'pointer'}}><MessageCircle size={15}/> Request quotation on WhatsApp</button><button type="button" onClick={requestEmail} className="btn-ghost" style={{borderColor:'var(--line)',color:'var(--text)',cursor:'pointer'}}><Mail size={15}/> Send quotation request by email</button></div>
-          {sent&&<p style={{display:'flex',alignItems:'center',gap:7,color:'var(--gold)',fontSize:10,marginBottom:0}}><Send size={13}/> Request prepared. We will be in touch.</p>}
+          <div style={{display:'grid',gap:9}}><button type="submit" disabled={saving} className="btn-gold" style={{border:0,cursor:'pointer',opacity:saving?.65:1}}><MessageCircle size={15}/> {saving?'Saving request…':'Request quotation on WhatsApp'}</button><button type="button" disabled={saving} onClick={requestEmail} className="btn-ghost" style={{borderColor:'var(--line)',color:'var(--text)',cursor:'pointer'}}><Mail size={15}/> Send quotation request by email</button></div>
+          {sent&&<p style={{display:'flex',alignItems:'center',gap:7,color:'var(--gold)',fontSize:10,marginBottom:0}}><Send size={13}/> Request prepared. {signedIn?'It is also saved in your account.':'We will be in touch.'}</p>}
         </form>
       </div>}
     </section>
