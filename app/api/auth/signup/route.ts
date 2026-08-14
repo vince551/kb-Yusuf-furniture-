@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+import { randomUUID } from 'crypto'
 
 const PROJECT_ID = 'kb-yusuf-furniture'
 const ENDPOINT = 'https://cloud.appwrite.io/v1'
@@ -19,7 +20,7 @@ export async function POST(request: Request) {
     const createResponse = await fetch(`${ENDPOINT}/account`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Appwrite-Project': PROJECT_ID },
-      body: JSON.stringify({ userId: 'unique()', email, password, name }),
+      body: JSON.stringify({ userId: randomUUID(), email, password, name }),
       cache: 'no-store',
     })
 
