@@ -3,11 +3,11 @@ import { ArrowRight, ArrowUpRight, Search, ShoppingBag, Sparkles, Truck, ShieldC
 import ThemeToggle from './components/theme-toggle';
 import ScrollProgress from './components/scroll-progress';
 import PremiumPolish from './components/premium-polish';
+import { furnitureImage } from './data/images';
 
-const image=(n:number)=>`https://raw.githubusercontent.com/vince551/tovi/main/IMG-20260813-WA${String(n).padStart(4,'0')}.jpg`;
-const images={hero:image(62),living:image(63),dining:image(64),bedroom:image(65),office:image(66),lounge:image(67),detail:image(68),diningAlt:image(69),bedroomAlt:image(70)};
-const products=[['Luna Bouclé Sofa','Living',image(62),'luna-boucle-sofa'],['Atelier Dining Collection','Dining',image(63),'atelier-dining-collection'],['Noir Bedroom Suite','Bedroom',image(64),'noir-bedroom-suite']];
-const inspiration=[['Living / Soft architecture',image(71)],['Dining / Sculptural forms',image(72)],['Bedroom / Quiet materials',image(73)],['Workspace / Warm minimalism',image(74)],['Objects / Natural texture',image(75)]];
+const images={hero:furnitureImage(1),living:furnitureImage(2),dining:furnitureImage(3),bedroom:furnitureImage(4),office:furnitureImage(5),lounge:furnitureImage(6),detail:furnitureImage(7),diningAlt:furnitureImage(8),bedroomAlt:furnitureImage(9)};
+const products=[['Luna Bouclé Sofa','Living',furnitureImage(10),'luna-boucle-sofa'],['Atelier Dining Collection','Dining',furnitureImage(11),'atelier-dining-collection'],['Noir Bedroom Suite','Bedroom',furnitureImage(12),'noir-bedroom-suite']];
+const inspiration=[['Living / Soft architecture',furnitureImage(13)],['Dining / Sculptural forms',furnitureImage(14)],['Bedroom / Quiet materials',furnitureImage(15)],['Workspace / Warm minimalism',furnitureImage(16)],['Objects / Natural texture',furnitureImage(17)]];
 
 export default function Home(){return <main className="site-shell min-h-screen overflow-hidden"><ScrollProgress/><PremiumPolish/>
 <div className="marquee"><span>KB YUSUF FURNITURE INTERNATIONAL LIMITED · ABUJA, NIGERIA · INTERIOR DECORATIONS · COMPLIMENTARY DELIVERY · KB YUSUF FURNITURE INTERNATIONAL LIMITED · ABUJA, NIGERIA · INTERIOR DECORATIONS · COMPLIMENTARY DELIVERY · </span></div>
