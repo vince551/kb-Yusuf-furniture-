@@ -2,15 +2,11 @@
 
 import { FormEvent, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/client'
 import { ArrowRight, LogIn, LogOut, Mail, ShieldCheck, UserPlus } from 'lucide-react'
+import { ID } from 'appwrite'
+import { account } from '@/lib/appwrite/client'
 
-const supabase = createClient()
-
-type Customer = {
-  email?: string
-  user_metadata?: { full_name?: string }
-}
+type Customer = { $id: string; email: string; name: string }
 
 export default function Account() {
   const [mode, setMode] = useState<'login' | 'signup'>('login')
@@ -22,34 +18,29 @@ export default function Account() {
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user as Customer | null))
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user as Customer | null)
-    })
-    return () => listener.subscription.unsubscribe()
-  }, [])
-
-  async function submit(e: FormEvent) {
-    e.preventDefault()
-    setLoading(true); setError(''); setMessage('')
-
-    if (mode === 'signup') {
-      const { data, error } = await supabase.auth.signUp({
-        email: email.trim(), password,
-        options: { data: { full_name: fullName.trim() } },
-      })
-      if (error) setError(error.message)
-      else if (data.session) setMessage('Your account is ready. Welcome to KB Yusuf Furniture.')
-      else setMessage('Account created. Check your email to verify your account before signing in.')
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password })
-      if (error) setError(error.message); else setMessage('Welcome back.')
-    }
-    setLoading(false)
+  async function loadUser() {
+    try { setUser(await account.get() as Customer) } catch { setUser(null) }
   }
 
-  async function signOut() { await supabase.auth.signOut(); setMessage('You have been signed out.') }
+  useEffect(() => { loadUser() }, [])
+
+  async function submit(e: FormEvent) {
+    e.preventDefault(); setLoading(true); setError(''); setMessage('')
+    try {
+      if (mode === 'signup') {
+        await account.create(ID.unique(), email.trim(), password, fullName.trim())
+      }
+      await account.createEmailPasswordSession(email.trim(), password)
+      await loadUser()
+      setMessage(mode === 'signup' ? 'Your account is ready. Welcome to KB Yusuf Furniture.' : 'Welcome back.')
+    } catch (err: any) {
+      setError(err?.message || 'Unable to complete the request. Please try again.')
+    } finally { setLoading(false) }
+  }
+
+  async function signOut() {
+    try { await account.deleteSession('current') } finally { setUser(null); setMessage('You have been signed out.') }
+  }
 
   return (
     <main className="site-shell min-h-screen">
@@ -61,14 +52,13 @@ export default function Account() {
       <section className="min-h-[calc(100vh-75px)] px-5 py-16 md:px-[7vw] md:py-24 flex items-center justify-center">
         <div className="w-full max-w-xl rounded-sm border border-[var(--line)] bg-[var(--surface)] p-7 shadow-2xl md:p-12">
           <p className="eyebrow">CLIENT ACCOUNT</p>
-
           {user ? (
             <div className="mt-5">
-              <h1 className="display text-5xl leading-[.9] md:text-7xl">Welcome,<br/><i className="text-[var(--gold)]">{user.user_metadata?.full_name || user.email?.split('@')[0] || 'Customer'}.</i></h1>
+              <h1 className="display text-5xl leading-[.9] md:text-7xl">Welcome,<br/><i className="text-[var(--gold)]">{user.name || user.email.split('@')[0]}.</i></h1>
               <p className="mt-6 text-sm leading-7 text-[var(--muted)]">Your customer account is active. Your quotation requests can be managed from this account.</p>
               <div className="mt-7 space-y-3 border-y border-[var(--line)] py-6 text-sm">
                 <div className="flex items-center gap-3"><Mail size={17} className="text-[var(--gold)]"/><span>{user.email}</span></div>
-                <div className="flex items-center gap-3"><ShieldCheck size={17} className="text-[var(--gold)]"/><span>Authenticated customer session</span></div>
+                <div className="flex items-center gap-3"><ShieldCheck size={17} className="text-[var(--gold)]"/><span>Authenticated Appwrite customer session</span></div>
               </div>
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <Link href="/bag" className="btn-gold">View quotation bag <ArrowRight size={15}/></Link>
@@ -79,22 +69,19 @@ export default function Account() {
             <>
               <h1 className="display mt-4 text-5xl leading-[.9] md:text-7xl">Your<br/><i className="text-[var(--gold)]">Maison.</i></h1>
               <p className="mt-6 text-sm leading-7 text-[var(--muted)]">Create an account or sign in to keep your furniture quotation requests, customer details and future enquiries together.</p>
-
               <div className="mt-8 grid grid-cols-2 border-b border-[var(--line)]">
                 <button onClick={() => {setMode('login');setError('');setMessage('')}} className={`flex items-center justify-center gap-2 border-b py-4 text-[9px] uppercase tracking-[.18em] ${mode === 'login' ? 'border-[var(--gold)] text-[var(--gold)]' : 'border-transparent text-[var(--muted)]'}`}><LogIn size={14}/> Sign in</button>
                 <button onClick={() => {setMode('signup');setError('');setMessage('')}} className={`flex items-center justify-center gap-2 border-b py-4 text-[9px] uppercase tracking-[.18em] ${mode === 'signup' ? 'border-[var(--gold)] text-[var(--gold)]' : 'border-transparent text-[var(--muted)]'}`}><UserPlus size={14}/> Create account</button>
               </div>
-
               <form onSubmit={submit} className="mt-7 space-y-5">
                 {mode === 'signup' && <label className="block text-[9px] uppercase tracking-[.15em] text-[var(--muted)]">Full name<input required value={fullName} onChange={e => setFullName(e.target.value)} className="mt-2 w-full border border-[var(--line)] bg-transparent p-4 text-sm normal-case tracking-normal text-[var(--text)] outline-none focus:border-[var(--gold)]" placeholder="Your full name" /></label>}
                 <label className="block text-[9px] uppercase tracking-[.15em] text-[var(--muted)]">Email<input required type="email" value={email} onChange={e => setEmail(e.target.value)} className="mt-2 w-full border border-[var(--line)] bg-transparent p-4 text-sm normal-case tracking-normal text-[var(--text)] outline-none focus:border-[var(--gold)]" placeholder="you@example.com" autoComplete="email" /></label>
-                <label className="block text-[9px] uppercase tracking-[.15em] text-[var(--muted)]">Password<input required minLength={6} type="password" value={password} onChange={e => setPassword(e.target.value)} className="mt-2 w-full border border-[var(--line)] bg-transparent p-4 text-sm normal-case tracking-normal text-[var(--text)] outline-none focus:border-[var(--gold)]" placeholder="At least 6 characters" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} /></label>
+                <label className="block text-[9px] uppercase tracking-[.15em] text-[var(--muted)]">Password<input required minLength={8} type="password" value={password} onChange={e => setPassword(e.target.value)} className="mt-2 w-full border border-[var(--line)] bg-transparent p-4 text-sm normal-case tracking-normal text-[var(--text)] outline-none focus:border-[var(--gold)]" placeholder="At least 8 characters" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} /></label>
                 <button disabled={loading} className="btn-gold w-full disabled:cursor-not-allowed disabled:opacity-50">{loading ? 'Please wait…' : mode === 'login' ? 'Sign in' : 'Create account'} <ArrowRight size={15}/></button>
               </form>
-
               {error && <p className="mt-5 border border-red-500/30 bg-red-500/10 p-4 text-xs leading-5 text-red-300">{error}</p>}
               {message && <p className="mt-5 border border-[var(--gold)]/30 bg-[var(--gold)]/10 p-4 text-xs leading-5 text-[var(--gold)]">{message}</p>}
-              <p className="mt-6 text-[9px] leading-5 text-[var(--muted)]">Passwords are handled by Supabase Authentication and are never stored in this website's source code.</p>
+              <p className="mt-6 text-[9px] leading-5 text-[var(--muted)]">Authentication is handled by Appwrite. Passwords are never stored in this website's source code.</p>
             </>
           )}
         </div>
