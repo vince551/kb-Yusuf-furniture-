@@ -1,4 +1,4 @@
-name: Deploy VINCE Maison to GitHub Pages
+name: Deploy KB Yusuf Furniture to GitHub Pages
 
 on:
   push:
@@ -23,13 +23,21 @@ jobs:
         with:
           node-version: 24
       - run: npm install
+
+      # GitHub Pages is a static host. Keep the Appwrite server API routes
+      # in the repository for Vercel, but exclude them from the Pages export.
+      - name: Exclude server API routes from static Pages build
+        run: mv app/api app/api._server
+
       - run: npm run build
+
       - name: Copy furniture photography
         run: |
           shopt -s nullglob
-          cp *.jpg out/ || true
-          cp *.jpeg out/ || true
-          cp *.png out/ || true
+          cp public/images/*.jpg out/images/ 2>/dev/null || true
+          cp public/images/*.jpeg out/images/ 2>/dev/null || true
+          cp public/images/*.png out/images/ 2>/dev/null || true
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out
