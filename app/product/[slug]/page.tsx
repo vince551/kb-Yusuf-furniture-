@@ -1,18 +1,33 @@
 import ProductClient from './product-client';
-import { furnitureImage } from '../../data/images';
+import { products } from '../../data/products';
 
-const products: Record<string, {name:string; category:string; image:string; copy:string; details:string}> = {
-  'luna-boucle-sofa':{name:'Luna Bouclé Sofa',category:'Living',image:furnitureImage(18),copy:'A softly sculpted sofa designed to make the everyday feel special.',details:'Bouclé upholstery · solid timber frame · deep lounge seat'},
-  'atelier-dining-collection':{name:'Atelier Dining Collection',category:'Dining',image:furnitureImage(19),copy:'A generous dining setting for long lunches, late conversations and everything between.',details:'Natural wood · hand-finished surface · six-seat configuration'},
-  'noir-bedroom-suite':{name:'Noir Bedroom Suite',category:'Bedroom',image:furnitureImage(20),copy:'A calm, tactile bedroom collection with a quietly dramatic silhouette.',details:'Textured upholstery · oak accents · coordinated bedside pieces'},
+const productDetails: Record<string, string> = {
+  'luna-boucle-sofa': 'Bouclé upholstery · solid timber frame · deep lounge seat',
+  'atelier-dining-collection': 'Natural wood · hand-finished surface · six-seat configuration',
+  'noir-bedroom-suite': 'Textured upholstery · oak accents · coordinated bedside pieces',
+  'atelier-lounge-chair': 'Curved upholstery · supportive frame · sculptural lounge profile',
+  'milo-console': 'Stone-inspired surface · refined proportions · entryway-ready storage',
+  'sora-bedside': 'Natural character · compact storage · softly rounded silhouette',
 };
 
-export function generateStaticParams(){
-  return Object.keys(products).map(slug=>({slug}));
+export function generateStaticParams() {
+  return products.map(product => ({ slug: product.slug }));
 }
 
-export default async function Product({params}:{params:Promise<{slug:string}>}){
-  const {slug}=await params;
-  const product=products[slug]||products['luna-boucle-sofa'];
-  return <ProductClient p={product}/>;
+export default async function Product({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const product = products.find(item => item.slug === slug) ?? products[0];
+
+  return (
+    <ProductClient
+      p={{
+        name: product.name,
+        category: product.category,
+        image: product.image,
+        copy: product.desc,
+        details: productDetails[product.slug] ?? 'Furniture details available on request.',
+        slug: product.slug,
+      }}
+    />
+  );
 }
