@@ -1,4 +1,4 @@
-const basePath = process.env.VERCEL === '1' ? '' : '/tovi';
+const basePath = process.env.VERCEL === '1' ? '' : '/kb-Yusuf-furniture-';
 
 export const furnitureImages = Array.from(
   { length: 56 },
