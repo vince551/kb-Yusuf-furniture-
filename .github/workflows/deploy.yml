@@ -25,7 +25,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: npm
       - run: npm install
 
       # GitHub Pages is static. Keep the server API routes in the repository
