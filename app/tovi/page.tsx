@@ -1,11 +1,14 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function LegacyToviRoute() {
+  const router = useRouter();
+
   useEffect(() => {
-    window.location.replace('/kb-Yusuf-furniture-/');
-  }, []);
+    router.replace('/');
+  }, [router]);
 
   return (
     <main style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: 24 }}>
