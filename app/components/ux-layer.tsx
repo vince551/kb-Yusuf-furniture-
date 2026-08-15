@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { ArrowUp, Command, Home, Search, ShoppingBag, Sparkles, X, MessageCircle, Mail } from 'lucide-react';
+import { ArrowUp, Command, Home, Search, ShoppingBag, X, MessageCircle, Mail, Sparkles } from 'lucide-react';
 
 export default function UXLayer(){
   const [searchOpen,setSearchOpen]=useState(false);
@@ -33,14 +33,14 @@ export default function UXLayer(){
       </a>
     </div>
 
-    <button className="ux-search-trigger" onClick={()=>setSearchOpen(true)} aria-label="Open search"><Search size={15}/><span>Search the collection</span><kbd>⌘ K</kbd></button>
+    <button className="ux-search-trigger" onClick={()=>setSearchOpen(true)} aria-label="Open collection search"><Search size={15}/><span>Search the collection</span><kbd>⌘ K</kbd></button>
 
     {top && <button className="back-top" onClick={()=>window.scrollTo({top:0,behavior:'smooth'})} aria-label="Back to top"><ArrowUp size={16}/></button>}
 
     <nav className="mobile-bottom-nav" aria-label="Mobile navigation">
       <Link href="/"><Home size={17}/><span>Home</span></Link>
-      <button onClick={()=>setSearchOpen(true)}><Search size={17}/><span>Search</span></button>
-      <Link href="/concierge"><Sparkles size={17}/><span>Concierge</span></Link>
+      <button onClick={()=>setSearchOpen(true)} aria-label="Search"><Search size={17}/><span>Search</span></button>
+      <Link href="/contact"><Sparkles size={17}/><span>Design</span></Link>
       <Link href="/cart"><ShoppingBag size={17}/><span>Bag</span></Link>
     </nav>
 
@@ -50,7 +50,7 @@ export default function UXLayer(){
         <div className="search-head"><div><p className="search-kicker">KB YUSUF FURNITURE / DISCOVER</p><h2>Find something beautiful.</h2></div><button onClick={()=>setSearchOpen(false)} aria-label="Close"><X size={19}/></button></div>
         <form onSubmit={(e)=>{e.preventDefault();window.location.href=destination}} className="search-input-wrap"><Search size={20}/><input autoFocus value={query} onChange={e=>setQuery(e.target.value)} placeholder="Sofas, dining, oak, bouclé..."/><kbd><Command size={12}/> K</kbd></form>
         <div className="search-suggestions"><p>Popular searches</p>{suggestions.map(s=><button key={s} onClick={()=>{setQuery(s);window.location.href=`/shop?search=${encodeURIComponent(s)}`}}>{s}<span>→</span></button>)}</div>
-        <div className="search-footer"><Sparkles size={15}/><span>Looking for a complete room? <Link href="/concierge" onClick={()=>setSearchOpen(false)}>Ask our Furniture Concierge</Link></span></div>
+        <div className="search-footer"><Sparkles size={15}/><span>Planning a room? <Link href="/contact" onClick={()=>setSearchOpen(false)}>Start a design project</Link></span></div>
       </div>
     </div>}
   </>;
