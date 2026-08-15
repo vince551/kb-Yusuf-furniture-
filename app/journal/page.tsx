@@ -16,7 +16,7 @@ export default function Journal() {
           <Link href="/shop" className="nav-link">Collection</Link>
           <Link href="/spaces" className="nav-link">Spaces</Link>
           <Link href="/journal" className="nav-link active">Journal</Link>
-          <Link href="/concierge" className="nav-link gold">AI Concierge</Link>
+          <Link href="/contact" className="nav-link gold">Design Services</Link>
         </nav>
         <Link href="/cart" className="bag-link">Bag →</Link>
       </header>
@@ -35,13 +35,14 @@ export default function Journal() {
             <article key={title} className={`inspiration-card insp-${i + 1}`}>
               <img src={img} alt={title} loading={i === 0 ? 'eager' : 'lazy'} />
               <div><span>{title}</span></div>
+              <p style={{padding:'0 18px 18px',color:'var(--muted)',fontSize:12,lineHeight:1.7}}>{copy}</p>
             </article>
           ))}
         </div>
         <div style={{ maxWidth: 700, margin: '45px auto', textAlign: 'center' }}>
           <p className="eyebrow">Next chapter</p>
-          <h2 className="display" style={{ fontSize: 'clamp(2.8rem,6vw,6rem)' }}>Want help styling your room?</h2>
-          <Link href="/concierge" className="btn-gold">Ask Concierge →</Link>
+          <h2 className="display" style={{ fontSize: 'clamp(2.8rem,6vw,6rem)' }}>Ready to shape your space?</h2>
+          <Link href="/contact" className="btn-gold">Start a design enquiry →</Link>
         </div>
       </section>
     </main>
