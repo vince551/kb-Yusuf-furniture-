@@ -2,13 +2,14 @@
 const isVercel = process.env.VERCEL === '1';
 
 const nextConfig = {
-  // GitHub Pages needs a static export. Vercel should use normal Next.js output.
+  // GitHub Pages serves this repository from /kb-Yusuf-furniture-.
+  // Vercel uses normal Next.js routing and does not need a basePath.
   ...(isVercel
     ? {}
     : {
         output: 'export',
-        basePath: '/tovi',
-        assetPrefix: '/tovi/',
+        basePath: '/kb-Yusuf-furniture-',
+        assetPrefix: '/kb-Yusuf-furniture-/',
       }),
   images: { unoptimized: true },
   trailingSlash: true,
